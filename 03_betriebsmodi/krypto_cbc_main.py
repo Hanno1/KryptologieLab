@@ -28,8 +28,6 @@ class CBC:
     def encrypt_block(self, bit_string, last_bit_string):
         # 1. add E(x_i-1) to x_i
         new_bit_string = ""
-        if len(bit_string) != self.block_length or len(last_bit_string) != self.block_length:
-            raise Exception("Block length not equal!")
         for i in range(self.block_length):
             new_bit_string += str(int(bit_string[i]) ^ int(last_bit_string[i]))
         # 2. normal encode
@@ -59,8 +57,6 @@ class CBC:
 
         # 2. add D(x_i-1) to x_i
         new_bit_string = ""
-        if len(bit_string) != self.block_length or len(last_bit_string) != self.block_length:
-            raise Exception("Block length not equal!")
         for i in range(self.block_length):
             new_bit_string += str(int(bit_string[i]) ^ int(last_bit_string[i]))
         
