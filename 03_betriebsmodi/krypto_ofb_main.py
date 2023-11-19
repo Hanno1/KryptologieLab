@@ -2,7 +2,7 @@ import helperclass as hc
 import copy
 
 class OFB:
-    def __init__(self, key, initialisation, block_length=64) -> None:
+    def __init__(self, key, initialisation, block_length=128) -> None:
         self.key = key
         self.iv = initialisation
         self.block_length = block_length
@@ -28,7 +28,6 @@ class OFB:
 
     def encrypt_block(self, bit_string, last_bit_string):
         # 1. normal encode using the key and the last bit string
-        pass
         tmp_result = copy.deepcopy(last_bit_string)
 
         # 2. add tmp_result and the plaintext
@@ -43,10 +42,7 @@ class OFB:
 
 if __name__ == "__main__":
     iv = ""
-    for i in range(64):
-        # if i == 10 or i == 11 or i == 13 or i == 61:
-        #     iv += "1"
-        #     continue
+    for i in range(128):
         iv += "0"
 
     ofb = OFB("123", iv)

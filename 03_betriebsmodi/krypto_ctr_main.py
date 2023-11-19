@@ -1,7 +1,7 @@
 import helperclass as hc
 
 class CTR:
-    def __init__(self, key, initialisation=None, block_length=64) -> None:
+    def __init__(self, key, initialisation=None, block_length=128) -> None:
         self.key = key
         self.iv = initialisation
         self.block_length = block_length

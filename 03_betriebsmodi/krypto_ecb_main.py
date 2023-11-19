@@ -1,7 +1,7 @@
 import helperclass as hc
 
 class ECB:
-    def __init__(self, key, block_length = 64) -> None:
+    def __init__(self, key, block_length = 128) -> None:
         self.block_length = block_length
         self.key = key
 

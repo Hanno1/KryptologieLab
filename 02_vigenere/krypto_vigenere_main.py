@@ -68,7 +68,7 @@ class Viginere:
         for char in content:
             if char in self.alphabet:
                 cleaned_text += char
-        ICs = []
+        # ICs = []
         for i in range(1, 100):
             texts = [cleaned_text[j::i] for j in range(i)]
             IC = 0
@@ -90,6 +90,7 @@ class Viginere:
         #     return (labels.index(0) + 1)
         # else:
         #     return (labels.index(1) + 1)
+        return -1
             
     def break_chiffre(self, original, n):
         keys = [0 for _ in range(n)]

@@ -1,7 +1,7 @@
 import helperclass as hc
 
 class CBC:
-    def __init__(self, key, initialisation, block_length=64) -> None:
+    def __init__(self, key, initialisation, block_length=128) -> None:
         self.key = key
         self.iv = initialisation
         self.block_length = block_length
@@ -65,7 +65,7 @@ class CBC:
 
 if __name__ == "__main__":
     iv = ""
-    for i in range(64):
+    for i in range(128):
         iv += "0"
     cbc = CBC("123", iv)
 
