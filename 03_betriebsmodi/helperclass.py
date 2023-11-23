@@ -19,6 +19,19 @@ def write_file(string, output_file):
     file.close
     return 1
 
+def check_aes_key(keys, block_length):
+    if len(keys) != 11:
+        raise Exception("Wrong number of keys! It has to be 11 but is " + str(len(keys)))
+    for index, key in enumerate(keys):
+        if len(key) != block_length:
+            raise Exception("Wrong length of key " + str(index) + "! It has to be " + str(block_length) + " but is " + str(len(key)))
+
+def xor_add(bit_string1, bit_string2):
+    bit_string = ""
+    for i in range(len(bit_string1)):
+        bit_string += str(int(bit_string1[i]) ^ int(bit_string2[i]))
+    return bit_string
+
 def int_to_bit(integer):
     return bin(integer)[2:].zfill(8)
 

@@ -1,10 +1,20 @@
 import helperclass as hc
+from aes import AES
 
 class CBC:
-    def __init__(self, key, initialisation, block_length=128) -> None:
+    def __init__(self, initialisation, key=None, block_length=128) -> None:
         self.key = key
-        self.iv = initialisation
         self.block_length = block_length
+
+        if key is None:
+            self.key = hc.read_key_from_file("Beispiel_key.txt")
+        hc.check_aes_key(self.key, self.block_length)
+
+        self.aes = AES()
+
+        self.iv = initialisation
+        if len(self.iv) != self.block_length:
+            raise Exception("Wrong length of initialisation vector! It has to be " + str(self.block_length) + " but is " + str(len(self.iv)))
 
     def get_blocks_of_bit_string(self, bit_string):
         return [bit_string[i:i+self.block_length] for i in range(0, len(bit_string), self.block_length)]
@@ -31,9 +41,7 @@ class CBC:
         for i in range(self.block_length):
             new_bit_string += str(int(bit_string[i]) ^ int(last_bit_string[i]))
         # 2. normal encode
-        pass
-        
-        return new_bit_string
+        return self.aes.encrypt(new_bit_string, self.key)
 
     def decrypt_text(self, cipher_text):
         bit_content = hc.text_to_bit_string(cipher_text)
@@ -53,7 +61,7 @@ class CBC:
 
     def decrypt_block(self, bit_string, last_bit_string):
         # 1. normal encode
-        pass
+        bit_string = self.aes.decrypt(bit_string, self.key)
 
         # 2. add D(x_i-1) to x_i
         new_bit_string = ""
@@ -64,10 +72,8 @@ class CBC:
 
 
 if __name__ == "__main__":
-    iv = ""
-    for i in range(128):
-        iv += "0"
-    cbc = CBC("123", iv)
+    iv = "0" * 128
+    cbc = CBC(iv)
 
     enc = cbc.encrypt_text("Hello World Ich bin Hanno und das ist ein Test!")
     print(enc)
