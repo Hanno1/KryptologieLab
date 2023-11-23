@@ -7,35 +7,33 @@ class AES:
         # 128 bit string, 11 keys
         current_bit_string = bit_string
 
-        current_bit_string = self.xor_add(current_bit_string, keys[0])
+        current_bit_string = hc.xor_add(current_bit_string, keys[0])
         for i in range(1, 10):
             current_bit_string = self.sub_bytes(current_bit_string, hc.SBOX)
             current_bit_string = self.shift_rows(current_bit_string, self.shift_left)
             current_bit_string = self.mix_columns(current_bit_string, hc.MIX_COL)
-            current_bit_string = self.xor_add(current_bit_string, keys[i])
-
-            # print("After Round", i, hc.bit_string_to_hex_string(current_bit_string))
+            current_bit_string = hc.xor_add(current_bit_string, keys[i])
 
         current_bit_string = self.sub_bytes(current_bit_string, hc.SBOX)
         current_bit_string = self.shift_rows(current_bit_string, self.shift_left)
-        current_bit_string = self.xor_add(current_bit_string, keys[10])
+        current_bit_string = hc.xor_add(current_bit_string, keys[10])
 
         return current_bit_string
 
     def decrypt(self, bit_string, keys):
         current_bit_string = bit_string
 
-        current_bit_string = self.xor_add(current_bit_string, keys[10])
+        current_bit_string = hc.xor_add(current_bit_string, keys[10])
         current_bit_string = self.shift_rows(current_bit_string, self.shift_right)
         current_bit_string = self.sub_bytes(current_bit_string, hc.SBOX_INV)
 
         for i in range(1, 10):
-            current_bit_string = self.xor_add(current_bit_string, keys[10 - i])
+            current_bit_string = hc.xor_add(current_bit_string, keys[10 - i])
             current_bit_string = self.mix_columns(current_bit_string, hc.MIX_COL_INV)
             current_bit_string = self.shift_rows(current_bit_string, self.shift_right)
             current_bit_string = self.sub_bytes(current_bit_string, hc.SBOX_INV)
             
-        current_bit_string = self.xor_add(current_bit_string, keys[0])
+        current_bit_string = hc.xor_add(current_bit_string, keys[0])
 
         return current_bit_string
 
@@ -87,7 +85,7 @@ class AES:
                 for i in range(4):
                     multiplier = hc.int_to_bit(mat[i][entry])[::-1]
                     result = self.mix_columns_compute(relevant_entry, multiplier)
-                    new_bits[i] = self.xor_add(new_bits[i], result)
+                    new_bits[i] = hc.xor_add(new_bits[i], result)
             for j in range(4):
                 new_bit_string += new_bits[j]
         return new_bit_string
@@ -99,24 +97,15 @@ class AES:
                 new_bit_string = copy.deepcopy(byte_string)
                 for _ in range(b):
                     new_bit_string = self.double(new_bit_string)
-                # if b == 3:
-                #     new_bit_string = self.double(new_bit_string)
-                result_bit_string = self.xor_add(result_bit_string, new_bit_string)
+                result_bit_string = hc.xor_add(result_bit_string, new_bit_string)
         return result_bit_string
-
-
-    def xor_add(self, bit_string1, bit_string2):
-        bit_string = ""
-        for i in range(len(bit_string1)):
-            bit_string += str(int(bit_string1[i]) ^ int(bit_string2[i]))
-        return bit_string
     
     def double(self, bit_string):
         orig = copy.deepcopy(bit_string)
         bit_string = bit_string[1:]
         bit_string += "0"
         if orig[0] == "1":
-            bit_string = self.xor_add(bit_string, "00011011")
+            bit_string = hc.xor_add(bit_string, "00011011")
         return bit_string
 
 
