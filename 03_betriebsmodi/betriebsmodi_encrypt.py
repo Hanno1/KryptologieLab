@@ -11,6 +11,8 @@ def compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file, iv="0
     betriebsmodi = None
     key = hc.read_file(key_file).replace("\n", "").replace(" ", "")
     keys = aes_keygen(key)
+    if iv != "0"*128:
+        iv = hc.hex_string_to_bit_string(hc.read_file(iv).replace("\n", "").replace(" ", ""))
     if betriebsmodus.upper() == "ECB":
         betriebsmodi = ecb.ECB(key=keys)
     elif betriebsmodus.upper() == "CBC":
@@ -21,17 +23,11 @@ def compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file, iv="0
         betriebsmodi = ctr.CTR(key=keys)
     else:
         raise Exception("Wrong Betriebsmodus. Please choose ECB, CBC, CTR or OFB!")
-    text = hc.hex_string_to_bit_string(hc.read_file(input_file).replace("\n", "").replace(" ", ""))
+    text = hc.hex_string_to_bit_string(hc.read_file(input_file).replace(" ", ""))
     result = betriebsmodi.encrypt_text(hc.bit_string_to_text(text))
 
-    print("Result: ", result)
-
     hex_result = hc.bit_string_to_hex_string(hc.text_to_bit_string(result))
-    act_hex_result = ""
-    for i in range(0, len(hex_result), 2):
-        act_hex_result += hex_result[i:i+2] + " "
-
-    print("write File " + act_hex_result)
+    act_hex_result = hc.hex_string_to_nice_hex_string(hex_result)
 
     hc.write_file(act_hex_result, output_file)
 
@@ -41,7 +37,14 @@ if len(sys.argv) == 5:
     key_file = sys.argv[3]
     output_file = sys.argv[4]
 
-    compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file)
+    text = hc.read_file(input_file)
+    bit_text = hc.text_to_bit_string(text)
+    hex_text = hc.bit_string_to_hex_string(bit_text)
+    nice_hex_text = hc.hex_string_to_nice_hex_string(hex_text)
+
+    hc.write_file(nice_hex_text, output_file)
+
+    # compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file)
 elif len(sys.argv) == 6:
     betriebsmodus = sys.argv[1]
     input_file = sys.argv[2]

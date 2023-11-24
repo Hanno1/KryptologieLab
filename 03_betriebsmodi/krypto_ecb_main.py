@@ -1,5 +1,6 @@
 import helperclass as hc
 from aes import AES
+from aes_keygen import aes_keygen
 
 class ECB:
     def __init__(self, key = None, block_length = 128) -> None:
@@ -7,7 +8,9 @@ class ECB:
         self.block_length = block_length
 
         if key is None:
-            self.key = hc.read_key_from_file("Beispiel_key.txt")
+            self.key = hc.read_key_from_file("key.txt")
+            if len(self.key) == 1:
+                self.key = aes_keygen(self.key)
         hc.check_aes_key(self.key, block_length)
         
         self.aes = AES()
@@ -46,8 +49,8 @@ class ECB:
 
 if __name__ == "__main__":
     ecb = ECB()
-
-    enc = ecb.encrypt_text("Hello World!1")
+    
+    enc = ecb.encrypt_text("Hello World!12341234HDASDVASCccccccccccccccc")
     print(enc)
 
     dec = ecb.decrypt_text(enc)

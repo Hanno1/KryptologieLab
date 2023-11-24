@@ -75,6 +75,12 @@ def read_key_from_file(file_name):
             keys.append(hex_string_to_bit_string(line))
     return keys
 
+def hex_string_to_nice_hex_string(hex_string):
+    nice_hex_string = ""
+    for i in range(0, len(hex_string), 2):
+        nice_hex_string += hex_string[i:i+2] + " "
+    return nice_hex_string
+
 
 if __name__ == "__main__":
     print(bit_string_to_hex_string("0000000000011011"))

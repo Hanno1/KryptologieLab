@@ -10,7 +10,11 @@ import helperclass as hc
 def compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file, iv="0"*128):
     betriebsmodi = None
     key = hc.read_file(key_file).replace("\n", "").replace(" ", "")
+
     keys = aes_keygen(key)
+    if iv != "0"*128:
+        iv = hc.hex_string_to_bit_string(hc.read_file(iv).replace("\n", "").replace(" ", ""))
+
     if betriebsmodus.upper() == "ECB":
         betriebsmodi = ecb.ECB(key=keys)
     elif betriebsmodus.upper() == "CBC":
@@ -24,14 +28,12 @@ def compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file, iv="0
     text = hc.hex_string_to_bit_string(hc.read_file(input_file).replace("\n", "").replace(" ", ""))
     result = betriebsmodi.decrypt_text(hc.bit_string_to_text(text))
 
-    print("Result: ", result)
+    # print("Result: ", result)
 
     hex_result = hc.bit_string_to_hex_string(hc.text_to_bit_string(result))
     act_hex_result = ""
     for i in range(0, len(hex_result), 2):
         act_hex_result += hex_result[i:i+2] + " "
-
-    print("write File " + act_hex_result)
 
     hc.write_file(act_hex_result, output_file)
 
