@@ -1,5 +1,6 @@
 import helperclass as hc
 from aes import AES
+from aes_keygen import aes_keygen
 
 class CBC:
     def __init__(self, initialisation, key=None, block_length=128) -> None:
@@ -7,7 +8,7 @@ class CBC:
         self.block_length = block_length
 
         if key is None:
-            self.key = hc.read_key_from_file("Beispiel_key.txt")
+            self.key = aes_keygen(hc.read_key_from_file("key.txt"))
         hc.check_aes_key(self.key, self.block_length)
 
         self.aes = AES()

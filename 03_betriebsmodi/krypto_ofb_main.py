@@ -1,14 +1,16 @@
 import helperclass as hc
 import copy
 from aes import AES
+from aes_keygen import aes_keygen
 
 class OFB:
     def __init__(self, initialisation, key=None, block_length=128) -> None:
         self.key = key
         self.block_length = block_length
         if key is None:
-            self.key = hc.read_key_from_file("Beispiel_key.txt")
+            self.key = aes_keygen(hc.read_key_from_file("key.txt"))
         hc.check_aes_key(self.key, self.block_length)
+        
         self.aes = AES()
         self.iv = initialisation
         if len(self.iv) != self.block_length:
@@ -39,10 +41,10 @@ class OFB:
         tmp_result = self.aes.encrypt(tmp_result, self.key)
 
         # 2. add tmp_result and the plaintext
-        new_bit_string = ""
-        for i in range(self.block_length):
-            new_bit_string += str(int(bit_string[i]) ^ int(tmp_result[i]))
-        return new_bit_string, tmp_result
+        # new_bit_string = ""
+        # for i in range(self.block_length):
+        #     new_bit_string += str(int(bit_string[i]) ^ int(tmp_result[i]))
+        return hc.xor_add(bit_string, tmp_result), tmp_result
 
     def decrypt_text(self, cipher_text):
         return self.encrypt_text(cipher_text)

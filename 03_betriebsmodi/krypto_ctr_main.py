@@ -1,5 +1,6 @@
 import helperclass as hc
 from aes import AES
+from aes_keygen import aes_keygen
 
 class CTR:
     def __init__(self, key=None, block_length=128) -> None:
@@ -7,7 +8,7 @@ class CTR:
         self.block_length = block_length
 
         if key is None:
-            self.key = hc.read_key_from_file("Beispiel_key.txt")
+            self.key = aes_keygen(hc.read_key_from_file("key.txt"))
         hc.check_aes_key(self.key, self.block_length)
         self.aes = AES()
 
@@ -23,15 +24,14 @@ class CTR:
         encryption = ""
         counter = 0
         for block in bit_blocks:
-            res = self.encrypt_block(block, counter)
-            encryption += res
+            encryption += self.encrypt_block(block, counter)
             counter += 1
 
         return hc.bit_string_to_text(encryption)
 
     def encrypt_block(self, bit_string, counter):
         # counter to bit string
-        counter = counter % 2**self.block_length
+        # counter = counter % (2**self.block_length)
         counter_bit_string = bin(counter)[2:].zfill(self.block_length)
         return hc.xor_add(self.aes.encrypt(counter_bit_string, self.key), bit_string)
 
@@ -42,7 +42,7 @@ class CTR:
 if __name__ == "__main__":
     ctr = CTR()
 
-    enc = ctr.encrypt_text("Hallo Welt!asdasdd")
+    enc = ctr.encrypt_text("Hallo Welt!asdasddFFFFFFFasdffasdcccKKKKKKKKKKKHalloWelt!asdasddFFFFFFFasdffasdcccKKKKKKKKKKK")
     print(enc)
 
     dec = ctr.decrypt_text(enc)
