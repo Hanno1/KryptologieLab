@@ -61,11 +61,58 @@ class SubstitutionPermutationNetwork:
         #     encryption += hc.bit_string_to_text(bit_string)
         # return encryption
         return -1
+    
+    def get_part_keys(self, ori, enc):
+        enc = hc.text_to_bit_string(enc)
+        ori = hc.text_to_bit_string(ori)
+        while len(ori) < len(enc):
+            ori += "0"
+
+        # extract pairs
+        pairs_first = []
+        pairs_second = []
+        for i in range(0, len(ori), 16):
+            pairs_first.append((ori[i + 4:i+8], enc[i + 4: i+ 8]))
+            pairs_second.append((ori[i + 4:i+8], enc[i + 12: i+ 16]))
+
+        print("Length of pairs: ", len(pairs_first))
+        print('t for this is: ', len(pairs_first) / 1000)
+        
+        alphas = [0 for _ in range(16 * 16)]
+
+        for i in range(len(pairs_first)):
+            for l1 in range(0, 16):
+                for l2 in range(0, 16):
+                    l1_bits = hc.int_to_bit_4(l1)
+                    l2_bits = hc.int_to_bit_4(l2)
+                    v_2 = hc.xor_add(pairs_first[i][1], l1_bits)
+                    v_4 = hc.xor_add(pairs_second[i][1], l2_bits)
+
+                    # S Box inverse
+                    u_2 = hc.int_to_bit_4(S_BOX.index(int(v_2, 2)))
+                    u_4 = hc.int_to_bit_4(S_BOX.index(int(v_4, 2)))
+
+                    checking = [pairs_first[i][0][0], pairs_first[i][0][2], pairs_first[i][0][3], u_2[1], u_2[3], u_4[1], u_4[3]]
+                    if checking.count('1') % 2 == 0:
+                        alphas[l1 * 16 + l2] += 1
+        # print(alphas)
+        maxi = -1
+        max_key = None
+        for l1 in range(0, 16):
+            for l2 in range(0, 16):
+                beta = abs(alphas[l1 * 16 + l2] - (len(pairs_first) / 2000))
+                if beta > maxi:
+                    maxi = beta
+                    max_key = (l1, l2)
+        return max_key
 
     
 if __name__ == "__main__":
-    text = "Hallo Welt!"
-    key = "abcd"
+    text = ""
+    with open('input_break.txt') as f:
+        text = f.read().replace("\n", " ")
+    key = "b12f"
     spn = SubstitutionPermutationNetwork(key)
     enc = spn.encrypt(text)
-    print("Encryption: ", enc)
+
+    print(spn.get_part_keys(text, enc))
