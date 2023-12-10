@@ -67,7 +67,11 @@ def bit_string_to_hex_string(bit_string):
 def hex_string_to_bit_string(hex_string):
     bit_string = ""
     for el in hex_string:
-        bit_string += int_to_bit(int(el, 16))[4:]
+        try:
+            bit_string += int_to_bit(int(el, 16))[4:]
+        except:
+            print("Error in hex_string_to_bit_string: " + el)
+            raise ValueError
     return bit_string
 
 def read_key_from_file(file_name):
