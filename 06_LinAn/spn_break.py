@@ -13,6 +13,6 @@ if len(sys.argv) == 3:
     network = SPN('0000')
     key = network.get_part_keys(clear_text, encrypted_text)
 
-    print(f'key: *{key[0]}*{key[1]}')
+    print(f'part-key: *{key[0]}*{key[1]}')
 else:
     print('Usage: `python3 spn_break.py <clear_text_files> <encrypted_text_files>`')
