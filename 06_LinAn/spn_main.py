@@ -50,41 +50,42 @@ class SubstitutionPermutationNetwork:
         return encryption
     
     def get_part_keys(self, ori, enc):
-        # print(ori)
-
         enc = hc.hex_string_to_bit_string(enc)
         ori = hc.hex_string_to_bit_string(ori)
 
-        # extract pairs
-        pairs_first = []
-        pairs_second = []
-        for i in range(0, len(ori), 16):
-            pairs_first.append((ori[i + 4:i + 8], enc[i + 4: i + 8]))
-            pairs_second.append((ori[i + 4:i + 8], enc[i + 12: i + 16]))
+        # # extract pairs
+        # pairs_first = []
+        # pairs_second = []
+        # for i in range(0, len(ori), 16):
+        #     pairs_first.append((, enc[i + 4: i + 8]))
+        #     pairs_second.append((ori[i + 4:i + 8], enc[i + 12: i + 16]))
         
         alphas = [0 for _ in range(16 * 16)]
-        for i in range(len(pairs_first)):
+        for i in range(0, len(ori), 16):
+            first_ori = ori[i + 4:i + 8]
+            first_enc = enc[i + 4: i + 8]
+            second_enc = enc[i + 12: i + 16]
             for l1 in range(0, 16):
+                l1_bits = hc.int_to_bit_4(l1)
+                v_2 = hc.xor_add(first_enc, l1_bits)
+                u_2 = hc.int_to_bit_4(S_BOX.index(int(v_2, 2)))
                 for l2 in range(0, 16):
-                    l1_bits = hc.int_to_bit_4(l1)
                     l2_bits = hc.int_to_bit_4(l2)
-                    v_2 = hc.xor_add(pairs_first[i][1], l1_bits)
-                    v_4 = hc.xor_add(pairs_second[i][1], l2_bits)
-
+                    v_4 = hc.xor_add(second_enc, l2_bits)
                     # S Box inverse
-                    u_2 = hc.int_to_bit_4(S_BOX.index(int(v_2, 2)))
                     u_4 = hc.int_to_bit_4(S_BOX.index(int(v_4, 2)))
 
-                    checking = [pairs_first[i][0][0], pairs_first[i][0][2], pairs_first[i][0][3], u_2[1], u_2[3], u_4[1], u_4[3]]
+                    checking = [first_ori[0], first_ori[2], first_ori[3], u_2[1], u_2[3], u_4[1], u_4[3]]
                     if checking.count('1') % 2 == 0:
                         alphas[l1 * 16 + l2] += 1
  
         maxi = -1
         max_key = None
+        length = len(ori) // 16
         # print(len(pairs_first))
         for l1 in range(0, 16):
             for l2 in range(0, 16):
-                beta = abs(alphas[l1 * 16 + l2] - (len(pairs_first) / 2))
+                beta = abs(alphas[l1 * 16 + l2] - (length / 2))
                 if beta > maxi:
                     maxi = beta
                     max_key = (l1, l2)
@@ -95,9 +96,17 @@ if __name__ == "__main__":
     # text = ""
     # with open('input_break.txt') as f:
     #     text = f.read().replace("\n", " ")
-    # key = "b12f"
+    key = "b12f"
     # spn = SubstitutionPermutationNetwork(key)
     # enc = spn.encrypt(text)
 
     # print(spn.get_part_keys(text, enc))
     print('doing main???')
+
+
+    with open('save_text.txt') as f:
+        random_text = f.read()
+    network = SubstitutionPermutationNetwork(key)
+    encrypted = hc.bit_string_to_hex_string(hc.text_to_bit_string(network.encrypt(random_text, enc_hex=True)))
+    with open('save_enc.txt', 'w') as f:
+        f.write(encrypted)
