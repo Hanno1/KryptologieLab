@@ -25,3 +25,10 @@ Zum Ausführen der Dateien gehe immer in den entsprechenden Unterordner.
 - Nun wurde der AES mit den Betriebsmodis kombiniert. Es gibt jeweils ein Ent- und ein Verschlüsselungsprogramm. 
 - Verschlüsselung: Gib 'py betriebsmodi_encrypt.py <bm> <input_file> <key_file> <output_file> <iv>' in die Konsole ein. bm ist der Betriebsmodi, der verwendet werden soll. Es ist entweder ecb, cbc, ofb oder ctr. Groß- bzw. Kleinschreibung ist egal. input_file enthält den Orignaltext als hexfolge. Er kann jetzt beliebig lang werden und ist nicht auf 128 Bit beschränkt. key_file enthält 32 hexzahlen. Die Verschlüsselung wird als hex folge in die output datei geschrieben. Ist der Betriebsmodi cbc oder ofb, so kann noch ein Initialisierungsvektorfile mitgegeben werden. Die Datei enthält ebenfalls 32 Hex.
 - Entschlüsselung: Gib 'py betriebsmodi_decrypt.py <bm> <input_file> <key_file> <output_file> <iv>' in die Konsole ein.
+
+6. Aufgabe - Lineare Kryptoanalyse
+- Verschlüsselung: Gib 'py spn_encrypt.py <input_file> <key_file> <output_file>' in die Konsole ein. Alle Dateien sind im Hex Format gespeichert. Der key hat 16 bits, also 4 Hex. 
+- Brechen: Gib 'py spn_break.py <input_file> <output_file>' in die Konsole ein. Der Algorithmus wird den 2.ten und 4.ten Teilschlüssel in der Konsole ausgeben. Umso mehr Klartext- Kryptotextpaare übergeben werden, umso wahrscheinlicher wird der Schlüssel korrekt sein. Die Inputs sollten zufällig generiert worden sein und im output file stehen die dazugehörigen verschlüsselten Hexwerte.
+- Brechen-analyse: Gib 'py spn_break_analyses.py <text_count> <repetitions>' in die Konsole ein. text_count und repetitions sind optional. text_count beschreibt die Anzahl an Klartext-Kryptotextpaaren. Für eine sinnvolle Analyse sollte es mindestens 8000 sein. Für einen aussagekräftigen wert kann das Brechen der Chiffre mit neuen Text und Schlüssel wiederholt werden. Dazu ist der Wert repetitions da. Für 8000 Paare schein die Wahrscheinlichkeit die Teilschlüssel korrekt zu bekommen, etwa 60-80% (so oft habe ich es nicht laufen lassen, da es doch etwas lange dauert).
+
+7. Aufgabe - 
