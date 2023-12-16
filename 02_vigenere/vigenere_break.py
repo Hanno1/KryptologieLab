@@ -4,7 +4,7 @@ import krypto_vigenere_main as vigenere_chiffre
 V = vigenere_chiffre.Viginere()
 if len(sys.argv) == 3:
     input_file = sys.argv[1]
-    output_file = sys.argv[3]
+    output_file = sys.argv[2]
 
     V.break_vigenere_file(input_file, output_file)
 elif len(sys.argv) == 1:

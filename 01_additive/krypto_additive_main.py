@@ -7,6 +7,8 @@ number_to_char = lambda number: chr(number + 65)
 
 class Additive_Chiffre:
     def __init__(self, key=None) -> None:
+        if key is not None:
+            self.key = key % 26
         self.key = key
         self.alphabet = hc.ALPHABET
         self.m = len(self.alphabet)
