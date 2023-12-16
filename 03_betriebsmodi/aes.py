@@ -3,10 +3,12 @@ import copy
 
 
 class AES:
+    def __init__(self):
+        pass
+
     def encrypt(self, bit_string, keys):
         # 128 bit string, 11 keys
         current_bit_string = bit_string
-
         current_bit_string = hc.xor_add(current_bit_string, keys[0])
         for i in range(1, 10):
             current_bit_string = self.sub_bytes(current_bit_string, hc.SBOX)
@@ -114,7 +116,6 @@ if __name__ == "__main__":
     keys = hc.read_key_from_file("Beispiel_key.txt")
     with open("Beispiel_1_Klartext.txt") as f:
         content = f.read().replace("\n", "").replace(" ", "")
-    bit_string = hc.hex_string_to_bit_string(content)
     bit_string = hc.hex_string_to_bit_string(content)
 
     aes = AES()
