@@ -33,3 +33,6 @@ Zum Ausführen der Dateien gehe immer in den entsprechenden Unterordner.
 
 7. Aufgabe - Lineare Approximation: Güte
 - Güte Bestimmung der Linearen Approximation einer S-Box: Gib 'py spn_get_bias.py <linear_approx_file> <s_box_file>' in die Konsole ein. Linear Approximation Datei ist eine Datei, wo die lineare Approximation drin kodiert ist. Diese Approximation wird auch zuächst getestet. Das s_box_file enthält die SBox für die Lineare Kryptoanalyse. Beim Ausführen wird der Bias dieser Approximation in der Konsole ausgegeben. Ist er -1, so ist die Approximation für die S-Box und die Permutation nicht korrekt. Ansonsten sollte ein positiver Wert rauskommen. Umso kleiner der bias, umso besser die Approximation.
+
+8. Aufgabe - RSA 
+- Implementierung des RSA-Algorithmus. Zum Ausführen gehe in das verzeichnis '08_RSA' und gib in die Kommandozeile 'py rsa.py <input_file> <key_file> <output_file>'. Das <input_file> enthält genau eine Dezimalzahl, die kodiert bzw dekodiert werden soll. Das <keyfile> enthält zwei Zeile: Die erste Zeile ist der Schlüssel zum kodieren bzw. dekodieren (e bzw. d) und die zweite Zeile enthält das n. Das Resultat der Kodierung bzw. Dekodierung wird in das angegbene <output_file> geschrieben.
