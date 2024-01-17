@@ -36,3 +36,6 @@ Zum Ausführen der Dateien gehe immer in den entsprechenden Unterordner.
 
 8. Aufgabe - RSA 
 - Implementierung des RSA-Algorithmus. Zum Ausführen gehe in das verzeichnis '08_RSA' und gib in die Kommandozeile 'py rsa.py <input_file> <key_file> <output_file>'. Das <input_file> enthält genau eine Dezimalzahl, die kodiert bzw dekodiert werden soll. Das <keyfile> enthält zwei Zeile: Die erste Zeile ist der Schlüssel zum kodieren bzw. dekodieren (e bzw. d) und die zweite Zeile enthält das n. Das Resultat der Kodierung bzw. Dekodierung wird in das angegbene <output_file> geschrieben.
+
+9. Aufgabe - RSA Schlüsselgenerierung
+- Die 9.te Aufgabe ist sinnvollerweise ebenfalls im 08_RSA Ordner, um die Ergebnisse der Schlüsselgenerierung gleich testen zu können. Zum Ausführen muss 'py rsa_keygen.py <length> <private_key> <open_key> <prime_numbers>' in die Konsole eingegeben werden. <lenght> beschreibt die gewünschte Schlüssellänge. Es ist sinnvoll eine Länge von etwa 1000 zu wählen. Dann werden die beiden Schlüssel berechnet. Anschließend werden die Schlüssel gespeichert: Der private Schlüssel kommt in das File <private_key> und der öffentliche in <open_key>. In die zweite Zeile der Schlüsselfiles wird das n gespeichert - also das Produkt der genutzten Primzahlen. Zur Kontrolle werden die verwendeten, zufälligen Primzahlen im file <prime_numbers> gespeichert.
