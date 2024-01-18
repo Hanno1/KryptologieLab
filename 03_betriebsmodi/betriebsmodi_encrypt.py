@@ -37,13 +37,6 @@ if len(sys.argv) == 5:
     key_file = sys.argv[3]
     output_file = sys.argv[4]
 
-    # text = hc.read_file(input_file)
-    # bit_text = hc.text_to_bit_string(text)
-    # hex_text = hc.bit_string_to_hex_string(bit_text)
-    # nice_hex_text = hc.hex_string_to_nice_hex_string(hex_text)
-
-    # hc.write_file(nice_hex_text, output_file)
-
     compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file)
 elif len(sys.argv) == 6:
     betriebsmodus = sys.argv[1]

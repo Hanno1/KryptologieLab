@@ -3,7 +3,10 @@ import random
 I = [1, 7, 11, 13, 17, 19, 23, 29]
 
 def test_miller_rabin(n, repeat=10):
-    # return True if n is prime
+    """
+    miller rabin prime test repeated repeat times for the number n. Its repeated to get a higher probability of correctness
+    its implemented as written on the slides
+    """
     k = 1
     m = n - 1
     while m % 2 == 0:
@@ -27,7 +30,9 @@ def test_miller_rabin(n, repeat=10):
     return True
 
 def generate_prime(bits):
-    # generate a prime number with bits length
+    """
+    generate a prime number with bits length using the algorithms given on the slide and test for primality with miller rabin
+    """
     z = 30 * random.getrandbits(bits)
     current_i = 0
     current_index = 0
@@ -40,6 +45,9 @@ def generate_prime(bits):
         current_index += 1
 
 def get_generator(bits = 1000):
+    """
+    get the generator number g and a prime number p with bits length
+    """
     # search for q prim, that p = 2*q + 1 is prim
     q = generate_prime(bits)
     p = 2 * q + 1
@@ -50,6 +58,10 @@ def get_generator(bits = 1000):
     return p, g
 
 def get_result(bits):
+    """
+    computes all needed values for this task. p is the prime number, g is the generator, 
+    A is the result of Allice and B is the result of Bob. S is the shared key and therefore the key that can be used for AES
+    """
     p, g = get_generator(bits)
     a = random.randint(2, p - 2)
     b = random.randint(2, p - 2)
