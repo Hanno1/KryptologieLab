@@ -22,6 +22,9 @@ def get_text_length(content):
     return length
 
 def check_repeating_seq(seq):
+    """
+    check key_string for multiple occurences of the same sequence 
+    """
     temp = (seq + seq).find(seq, 1, -1) 
     if temp != -1: 
         return seq[:temp] 

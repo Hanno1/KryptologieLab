@@ -1,11 +1,15 @@
 import helperclass as hc
 import math
-# from sklearn.cluster import KMeans
 
 char_to_number = lambda char: ord(char) - 65
 number_to_char = lambda number: chr(number + 65)
 
 class Viginere:
+    """
+    class to handle the vigenere chiffre
+
+    key: string with chars between A and Z
+    """
     def __init__(self, key = None):
         self.key = key
         self.alphabet = hc.ALPHABET
@@ -15,17 +19,30 @@ class Viginere:
         self.decrypt_char = lambda char, k: number_to_char((char_to_number(char) - k) % self.m)
 
     def encrypt_file(self, input_file, output_file):
+        """
+        input_file: path of the file with the text to encrypt
+        output_file: path of the file to save the encrypted text
+
+        encrypts the text in the input_file and saves it in the output_file
+        """
         content = hc.read_file(input_file)
         encrypt = self.encrypt_text(content)
         hc.write_file(encrypt, output_file)
         return 1
 
     def encrypt_text(self, text):
+        """
+        text: text to encrypt
+
+        encrypts the text with the key self.key and returns it. The encryption is done with the vigenere chiffre
+        """
         real_keys = [char_to_number(char) for char in self.key]
         encrypted_text = ""
         i = 0
+        # iterate over every character in the text
         for char in text:
             if char in self.alphabet:
+                # encrypt char with current key char and increment key index
                 encrypted_text += self.encrypt_char(char, real_keys[i])
                 i += 1
                 if len(real_keys) == i:
@@ -35,17 +52,30 @@ class Viginere:
         return encrypted_text
 
     def decrypt_file(self, input_file, output_file):
+        """
+        input_file: path of the file with the text to decrypt
+        output_file: path of the file to save the decrypted text
+
+        decrypts the text in the input_file and saves it in the output_file
+        """
         content = hc.read_file(input_file)
         decrypt = self.decrypt_text(content)
         hc.write_file(decrypt, output_file)
         return 1
 
     def decrypt_text(self, text):
+        """
+        text: text to decrypt
+
+        decrypts the text with the key self.key and returns it. The decryption is done with the vigenere chiffre
+        """
         real_keys = [char_to_number(char) for char in self.key]
         decrypted_text = ""
         i = 0
+        # iterate over every character in the text
         for char in text:
             if char in self.alphabet:
+                # decrypt char with current key char and increment key index
                 decrypted_text += self.decrypt_char(char, real_keys[i])
                 i += 1
                 if len(real_keys) == i:
@@ -55,20 +85,34 @@ class Viginere:
         return decrypted_text
 
     def break_vigenere_file(self, input_file, output_file):
+        """
+        input_file: path of the file with the text to decrypt
+        output_file: path of the file to save the key and the decrypted text
+
+        breaks the text in the input_file and save the result to the output_file
+        """
         content = hc.read_file(input_file)
         key, decrypted = self.break_vigenere(content)
         hc.write_file(f"{key}\n{decrypted}", output_file)
 
     def break_vigenere(self, content):
+        """
+        computes the most probably key length n and then breaks the text as in the additive chiffre
+        """
         n = self.break_chiffre_get_n(content)
         return self.break_chiffre(content, n)
 
     def break_chiffre_get_n(self, content):
+        """
+        content: text to break
+
+        returns the most probable length of the key
+        """
         cleaned_text = ""
         for char in content:
             if char in self.alphabet:
                 cleaned_text += char
-        # ICs = []
+        # for keylength of 1 to 99
         for i in range(1, 100):
             texts = [cleaned_text[j::i] for j in range(i)]
             IC = 0
@@ -76,32 +120,30 @@ class Viginere:
                 ic = 1 / (len(t) * (len(t) - 1))
                 ic *= (sum([(t.count(c) * (t.count(c) - 1)) for c in self.alphabet])) * (len(t) / len(cleaned_text))
                 IC += ic
-            # ICs.append([0, IC])
+            # if the index of coincidence is close to 0.076 (the coincidence index of the german language), we found the key length
             if math.sqrt((IC - 0.076)**2) < 0.01:
                 return i
-        # kmeans = KMeans(n_clusters=2, n_init=10).fit(ICs)
-        # centers = kmeans.cluster_centers_
-        # dist1 = math.sqrt((centers[0][1] - 0.076)**2)
-        # dist2 = math.sqrt((centers[1][1] - 0.076)**2)
-
-        # labels = list(kmeans.labels_)
-        # if dist1 < dist2:
-        #     # take position of first label 1
-        #     return (labels.index(0) + 1)
-        # else:
-        #     return (labels.index(1) + 1)
         return -1
             
     def break_chiffre(self, original, n):
+        """
+        orginal: text to break
+        n: length of the key
+
+        basically additive break with n keys
+        """
+        # get all n keys and texts
         keys = [0 for _ in range(n)]
         texts = ["" for _ in range(n)]
 
+        # generate texts
         i = 0
         for char in original:
             if char in self.alphabet:
                 texts[i % n] += char
                 i += 1
         
+        # break every text and generate keys
         i = 0
         for t in texts:
             key, decrypted = self.break_additive(t)
@@ -109,10 +151,12 @@ class Viginere:
             texts[i] = decrypted
             i += 1
 
+        # get the keystring
         key_string = ""
         for key in keys:
             key_string += number_to_char(key)
 
+        # get the decryptet text
         return_text = ""
         i = 0
         j = 0
@@ -130,6 +174,9 @@ class Viginere:
         return hc.check_repeating_seq(key_string), return_text
     
     def decrypt_text_additive(self, content, k):
+        """
+        just an additive decryption as in the additive chiffre
+        """
         decrypted_text = ""
         for char in content:
             if char in hc.ALPHABET:
@@ -139,6 +186,9 @@ class Viginere:
         return decrypted_text
     
     def break_additive(self, content):
+        """
+        basically the same function as in the additive chiffre
+        """
         text_length = hc.get_text_length(content)
 
         min_loss = math.inf

@@ -51,7 +51,6 @@ def get_generator(bits = 1000):
 
 def get_result(bits):
     p, g = get_generator(bits)
-    print(p, g)
     a = random.randint(2, p - 2)
     b = random.randint(2, p - 2)
     A = pow(g, a, p)
