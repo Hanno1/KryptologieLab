@@ -1,6 +1,10 @@
 import sys
 import krypto_additive_main as additive_chiffre
 
+"""
+main program to break the additive chiffre
+"""
+
 A = additive_chiffre.Additive_Chiffre()
 if len(sys.argv) == 3:
     input_file = sys.argv[1]

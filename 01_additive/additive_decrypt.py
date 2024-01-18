@@ -1,6 +1,10 @@
 import sys
 import krypto_additive_main as additive_chiffre
 
+"""
+main program to decrypt the additive chiffre
+"""
+
 if len(sys.argv) == 4:
     input_file = sys.argv[1]
     key = int(sys.argv[2])
