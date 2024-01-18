@@ -5,11 +5,10 @@ I = [1, 7, 11, 13, 17, 19, 23, 29]
 def test_miller_rabin(n, repeat=10):
     # return True if n is prime
     k = 1
-    m = 0
+    m = n - 1
     while m % 2 == 0:
+        m //= 2
         k += 1
-        m = (n - 1) // 2**k
-
     for _ in range(repeat):
         a = random.randint(2, n-1)
         b = pow(a, m, n)
@@ -40,37 +39,27 @@ def generate_prime(bits):
             current_index = 0
         current_index += 1
 
-def ggt(a, b):
-    r = [a, b]
-    s = [1, 0]
-    t = [0, 1]
-    while r[-1] != 0:
-        q_k = r[0] // r[1]
-        r.append(r[0] - q_k * r[1])
-        s.append(s[0] - q_k * s[1])
-        t.append(t[0] - q_k * t[1])
-        r, s, t = r[1:], s[1:], t[1:]
-    return r[0], s[0], t[0]
-
-def generate_key(bits):
-    p = generate_prime(bits)
-    q = p
-    while 0.66 * p < q < 1.5 * p:
+def get_generator(bits = 1000):
+    # search for q prim, that p = 2*q + 1 is prim
+    q = generate_prime(bits)
+    p = 2 * q + 1
+    while not test_miller_rabin(p):
         q = generate_prime(bits)
+        p = 2 * q + 1
+    g = random.randint(2, p - 2)
+    return p, g
 
-    phi_n = (p - 1) * (q - 1)
-    k = 16
-    while True:
-        e = 2**k + 1
-        k += 1
-        if ggt(e, phi_n)[0] == 1:
-            break
-    # print(p, q, e)
-    d = ggt(e, phi_n)[1] % phi_n
-    return (e, d, p, q)
-        
+def get_result(bits):
+    p, g = get_generator(bits)
+    print(p, g)
+    a = random.randint(2, p - 2)
+    b = random.randint(2, p - 2)
+    A = pow(g, a, p)
+    B = pow(g, b, p)
+    s1 = pow(B, a, p)
+    s2 = pow(A, b, p)
+    return s1, s2, p, g, A, B
+
 if __name__ == '__main__':
-    # p = generate_prime(1000)
-    # q = generate_prime(1000)
-    # print(p)
-    print(generate_key(1000))
+    print(get_result(100))
+    # print(test_miller_rabin(40203))

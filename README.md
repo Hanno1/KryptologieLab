@@ -39,3 +39,6 @@ Zum Ausführen der Dateien gehe immer in den entsprechenden Unterordner.
 
 9. Aufgabe - RSA Schlüsselgenerierung
 - Die 9.te Aufgabe ist sinnvollerweise ebenfalls im 08_RSA Ordner, um die Ergebnisse der Schlüsselgenerierung gleich testen zu können. Zum Ausführen muss 'py rsa_keygen.py <length> <private_key> <open_key> <prime_numbers>' in die Konsole eingegeben werden. <lenght> beschreibt die gewünschte Schlüssellänge. Es ist sinnvoll eine Länge von etwa 1000 zu wählen. Dann werden die beiden Schlüssel berechnet. Anschließend werden die Schlüssel gespeichert: Der private Schlüssel kommt in das File <private_key> und der öffentliche in <open_key>. In die zweite Zeile der Schlüsselfiles wird das n gespeichert - also das Produkt der genutzten Primzahlen. Zur Kontrolle werden die verwendeten, zufälligen Primzahlen im file <prime_numbers> gespeichert.
+
+10. Aufgabe - Diffie Hellmann Schlüsselaustausch
+- Die 10.te Aufgabe befindet sich im Ordner 10_diffie_helmann. Zum Ausführen muss 'py diffie_hellman.py <bitlength>' in die Konsole eingegeben werden. Die Variable <bitlength> beschreibt die Länge der verwendeten Primzahlen (circa). Diese Zahl sollte nicht zu groß werden. Eine Größe von etwa 100 sollte ausreichen. Die Ausgabe ist in der Konsole und beinhaltet die Primzahl p, den Generator g, Alices Berechnung A, Bobs Berechnung B und das gemeinsame Geheimnis S.
