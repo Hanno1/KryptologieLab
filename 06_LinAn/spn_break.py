@@ -1,6 +1,10 @@
 import sys
 from spn_main import SubstitutionPermutationNetwork as SPN
 
+"""
+gets a number of texts and their encrypted versions from the user and tries to recover the partkeys
+"""
+
 if len(sys.argv) == 3:
     clear_text_files = sys.argv[1]
     encrypted_text_files = sys.argv[2]
