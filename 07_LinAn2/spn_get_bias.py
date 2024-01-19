@@ -1,6 +1,10 @@
 import sys
 import spn_approx as approx
 
+"""
+main function to get the bias of the linear approximation
+"""
+
 if len(sys.argv) == 3:
     linear_approx_file = sys.argv[1]
     s_box_file = sys.argv[2]
