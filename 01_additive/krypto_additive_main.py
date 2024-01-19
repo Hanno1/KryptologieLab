@@ -7,13 +7,11 @@ number_to_char = lambda number: chr(number + 65)
 
 class Additive_Chiffre:
     """
-    Class to encrypt, decrypt and break additive chiffre
+    Class to handle the additive chiffre
     """
     def __init__(self, key=None) -> None:
         """
         key: letter of the alphabet between 0 and 25, the key will be used for encryption and decryption
-        encrypt_char: function to encrypt a single character -> ascii to 0-25
-        decrypt_char: function to decrypt a single character -> 0-25 to ascii
         """
         if key is not None:
             self.key = key % 26
@@ -21,6 +19,8 @@ class Additive_Chiffre:
         self.alphabet = hc.ALPHABET
         self.m = len(self.alphabet)
 
+        # encrypt_char: function to encrypt a single character -> ascii to 0-25
+        # decrypt_char: function to decrypt a single character -> 0-25 to ascii
         self.encrypt_char = lambda char: char
         self.decrypt_char = lambda char: char
 
@@ -28,15 +28,16 @@ class Additive_Chiffre:
             self.define_key_functions()
 
     def define_key_functions(self):
+        # initialize the functions using the key
         self.encrypt_char = lambda char: number_to_char((char_to_number(char) + self.key) % self.m)
         self.decrypt_char = lambda char: number_to_char((char_to_number(char) - self.key) % self.m)
 
     def encrypt_file(self, input_file, output_file):
         """
-        input_file: path of the file with the text to encrypt
+        input_file: path of the file with the original text
         output_file: path of the file to save the encrypted text
 
-        encrypts the text in the input_file and saves it in the output_file
+        encrypts the text in the input_file and saves it to the output_file
         """
         content = hc.read_file(input_file)
         encrypt = self.encrypt_text(content)
@@ -47,7 +48,7 @@ class Additive_Chiffre:
         """
         content: text to encrypt
 
-        encrypts the text with the key self.key and returns it
+        encrypts the text with the key self.key and returns it.
         """
         encrypted_text = ""
         for char in content:
@@ -59,7 +60,7 @@ class Additive_Chiffre:
 
     def decrypt_file(self, input_file, output_file):
         """
-        input_file: path of the file with the text to decrypt
+        input_file: path of the file with the encryptet text
         output_file: path of the file to save the decrypted text
 
         decrypts the text in the input_file and saves it in the output_file
@@ -99,7 +100,7 @@ class Additive_Chiffre:
         """
         content: text to break
 
-        breaks the additive chiffre and returns the key and the decrypted text. The breaking is implemented as in the slides.
+        breaks the additive chiffre and returns the key and the decrypted text. The breaking is implemented as given in the slides.
         """
         text_length = hc.get_text_length(content)
 
@@ -122,9 +123,11 @@ class Additive_Chiffre:
                     char_count[char_to_number(char)] += 1
             
             # compute the loss against the real frequencies in the german language
+            # we take the least squares loss
             for c in range(self.m):
                 loss += (char_count[c] / text_length - hc.TRUE_VALUES[c])**2
 
+            # update the minimal loss and the corresponding key and decrypted text
             if loss < min_loss:
                 min_decrypted_text = decrypted_text
                 min_loss = loss

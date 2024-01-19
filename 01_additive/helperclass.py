@@ -23,7 +23,7 @@ def write_file(string, output_file):
 
 def get_text_length(content):
     """
-    get length of a string
+    get length of a string (only chars in the alphabet count toward the length)
     """
     length = 0
     for char in content:
