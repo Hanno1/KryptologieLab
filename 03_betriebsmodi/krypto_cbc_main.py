@@ -1,14 +1,14 @@
 import helperclass as hc
 from aes import AES
-from aes_keygen import aes_keygen
 
 class CBC:
-    def __init__(self, initialisation, key=None, block_length=128) -> None:
+    """
+    implements the cbc blockchiffre using the aes algorithm for encrypting / decrypting blocks
+    """
+    def __init__(self, initialisation, key, block_length=128):
         self.key = key
         self.block_length = block_length
-
-        if key is None:
-            self.key = aes_keygen(hc.read_key_from_file("key.txt"))
+        # validate keys
         hc.check_aes_key(self.key, self.block_length)
 
         self.aes = AES()
@@ -18,9 +18,14 @@ class CBC:
             raise Exception("Wrong length of initialisation vector! It has to be " + str(self.block_length) + " but is " + str(len(self.iv)))
 
     def get_blocks_of_bit_string(self, bit_string):
+        # split the bit string into blocks of length block_length
         return [bit_string[i:i+self.block_length] for i in range(0, len(bit_string), self.block_length)]
 
     def encrypt_text(self, plain_text):
+        """
+        encrypts a text using the cbc blockchiffre algorithm given in the slides
+        """
+        # convert and split the bit string. Add a padding to the last block if necessary
         bit_content = hc.text_to_bit_string(plain_text)
         bit_blocks = self.get_blocks_of_bit_string(bit_content)
         while len(bit_blocks[-1]) < self.block_length:
@@ -29,6 +34,7 @@ class CBC:
         encryption = ""
         last_bit_string = self.iv
 
+        # encrypt every block using the cbc algorithm and the aes encryption 
         for block in bit_blocks:
             res = self.encrypt_block(block, last_bit_string)
             encryption += res
@@ -37,6 +43,9 @@ class CBC:
         return hc.bit_string_to_text(encryption)
 
     def encrypt_block(self, bit_string, last_bit_string):
+        """
+        encrypts a single block using the cbc algorithm -> first add last bitstring to x_i and then encrypt it using aes
+        """
         # 1. add E(x_i-1) to x_i
         new_bit_string = ""
         for i in range(self.block_length):
@@ -45,6 +54,10 @@ class CBC:
         return self.aes.encrypt(new_bit_string, self.key)
 
     def decrypt_text(self, cipher_text):
+        """
+        decrypts a text using the cbc blockchiffre algorithm given in the slides 
+        -> basically encryption but uses decrypt block instead of encrypt block
+        """
         bit_content = hc.text_to_bit_string(cipher_text)
         bit_blocks = self.get_blocks_of_bit_string(bit_content)
         if len(bit_blocks[-1]) != self.block_length:
@@ -53,6 +66,7 @@ class CBC:
         decryption = ""
         last_bit_string = self.iv
 
+        # decrypt the block of length block length
         for block in bit_blocks:
             res = self.decrypt_block(block, last_bit_string)
             decryption += res
@@ -61,6 +75,9 @@ class CBC:
         return hc.bit_string_to_text(decryption)
 
     def decrypt_block(self, bit_string, last_bit_string):
+        """
+        encryption backward -> first decrypt with the aes and then add the previous result
+        """
         # 1. normal encode
         bit_string = self.aes.decrypt(bit_string, self.key)
 

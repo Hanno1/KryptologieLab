@@ -6,11 +6,22 @@ import krypto_ofb_main as ofb
 from aes_keygen import aes_keygen
 import helperclass as hc
 
+"""
+main function to decrypt with aes and a betriebsmodi
+"""
 
 def compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file, iv="0"*128):
+    """
+    computes the aes decryption using the given betriebsmodus. 
+    AES is for decrypting blocks and the betriebsmodi for decrypting the whole file and therefore defining the blocks used by the aes
+
+    the key file is the file containing the key in hex -> a single key in this case since the remaining keys will be generated 
+    by the aes_keygen function
+    """
     betriebsmodi = None
     key = hc.read_file(key_file).replace("\n", "").replace(" ", "")
 
+    # generate all 11 keys
     keys = aes_keygen(key)
     if iv != "0"*128:
         iv = hc.hex_string_to_bit_string(hc.read_file(iv).replace("\n", "").replace(" ", ""))
@@ -25,15 +36,14 @@ def compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file, iv="0
         betriebsmodi = ctr.CTR(key=keys)
     else:
         raise Exception("Wrong Betriebsmodus. Please choose ECB, CBC, CTR or OFB!")
+    
+    # translate the hex string to a bit string and then apply the betriebsmodi
     text = hc.hex_string_to_bit_string(hc.read_file(input_file).replace("\n", "").replace(" ", ""))
     result = betriebsmodi.decrypt_text(hc.bit_string_to_text(text))
 
-    # print("Result: ", result)
-
+    # translate the bit string back to a hex string and write it to the output file
     hex_result = hc.bit_string_to_hex_string(hc.text_to_bit_string(result))
-    act_hex_result = ""
-    for i in range(0, len(hex_result), 2):
-        act_hex_result += hex_result[i:i+2] + " "
+    act_hex_result = hc.hex_string_to_nice_hex_string(hex_result)
 
     hc.write_file(act_hex_result, output_file)
 
@@ -53,5 +63,5 @@ elif len(sys.argv) == 6:
 
     compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file, iv)
 else:
-    raise Exception("Wrong Number of Arguments. You have to give an input_file name, a key as well as a output_file name. If you only give a key we will use the std input file original.txt and std output file encrypted.txt!")
+    raise Exception("Wrong number of arguments. Please use: python3 betriebsmodi_decrypt.py <betriebsmodus> <input_file> <key_file> <output_file> [<iv>] there iv is optional")
     

@@ -23,6 +23,9 @@ EXAMPLE_KEYS = ["2b 7e 15 16 28 ae d2 a6 ab f7 15 88 09 cf 4f 3c",
 
 
 class TestAes(unittest.TestCase):
+    """
+    unittest for aes. Not important to the task
+    """
     def test_shift_rows(self):
         text = "AchtBuchstaben:)"
         bit_string_text = hc.text_to_bit_string(text)
