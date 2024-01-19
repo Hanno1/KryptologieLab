@@ -1,6 +1,10 @@
 import sys
 import diffie_hellman_keyexchange
 
+"""
+main file to start the diffie hellman key exchange as in the slides
+"""
+
 if len(sys.argv) == 2:
     bits = sys.argv[1]
     s1, s2 = 1, 0

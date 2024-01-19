@@ -1,6 +1,10 @@
 import sys
 import rsa_keygen_main
 
+"""
+main file to generate the rsa keys as in the slides
+"""
+
 if len(sys.argv) == 5:
     length = sys.argv[1]
     key_private = sys.argv[2]

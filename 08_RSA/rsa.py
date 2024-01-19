@@ -1,6 +1,10 @@
 import sys
 import rsa_numbers as rn
 
+"""
+file to start the rsa algorithm as in the slides
+"""
+
 if len(sys.argv) == 4:
     input_file = sys.argv[1]
     key_file = sys.argv[2]
