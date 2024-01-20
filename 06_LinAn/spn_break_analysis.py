@@ -37,35 +37,35 @@ text_count = 8000
 # repeat for this many times
 repetitions = 1
 
-# if len(sys.argv) > 1:
-#     text_count = int(sys.argv[1])
-# if len(sys.argv) > 2:
-#     repetitions = int(sys.argv[2])
-# get_prob_correct(repetitions, text_count)
+if len(sys.argv) > 1:
+    text_count = int(sys.argv[1])
+if len(sys.argv) > 2:
+    repetitions = int(sys.argv[2])
+get_prob_correct(repetitions, text_count)
 
 # plot graph with probabilities depending on the text length
-x_values = [i for i in range(1_000, 12_000, 1_000)]
-repetitions = 10
+# x_values = [i for i in range(1_000, 12_000, 1_000)]
+# repetitions = 10
 
-y_both = []
-y_least_one = []
+# y_both = []
+# y_least_one = []
 
-for x in x_values:
-    print("Starting with x = ", x)
-    print("---------------------")
-    p1, p2, p3 = get_prob_correct(repetitions, x)
-    y_both.append(p1)
-    y_least_one.append(p3)
+# for x in x_values:
+#     print("Starting with x = ", x)
+#     print("---------------------")
+#     p1, p2, p3 = get_prob_correct(repetitions, x)
+#     y_both.append(p1)
+#     y_least_one.append(p3)
 
-print(y_both)
-print(y_least_one)
+# print(y_both)
+# print(y_least_one)
 
-plt.figure(figsize=(8, 6))
-plt.plot(x_values, y_both, label="both keys correct")
-plt.plot(x_values, y_least_one, label="at least one key correct")
-plt.xlabel("textlength")
-plt.ylabel("probability")
+# plt.figure(figsize=(8, 6))
+# plt.plot(x_values, y_both, label="both keys correct")
+# plt.plot(x_values, y_least_one, label="at least one key correct")
+# plt.xlabel("textlength")
+# plt.ylabel("probability")
 
-plt.legend()
-plt.show()
+# plt.legend()
+# plt.show()
 
