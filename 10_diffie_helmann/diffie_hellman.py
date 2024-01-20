@@ -11,6 +11,8 @@ if len(sys.argv) == 2:
     p, g, a, b = 0, 0, 0, 0
     while s1 != s2:
         s1, s2, p, g, a, b = diffie_hellman_keyexchange.get_result(int(bits))
+        if s1 != s2:
+            print("Secret difference between A and B: ", s1, " ", s2, " ?!? :(")
     print("prime p: ", p)
     print("generator g: ", g)
     print("Alice's computation A: ", a)

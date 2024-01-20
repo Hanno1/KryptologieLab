@@ -54,6 +54,7 @@ def get_generator(bits = 1000):
     while not test_miller_rabin(p):
         q = generate_prime(bits)
         p = 2 * q + 1
+    # get random g between 2 and p-2
     g = random.randint(2, p - 2)
     return p, g
 
@@ -61,6 +62,8 @@ def get_result(bits):
     """
     computes all needed values for this task. p is the prime number, g is the generator, 
     A is the result of Allice and B is the result of Bob. S is the shared key and therefore the key that can be used for AES
+
+    variablenames correspond to names in the slides
     """
     p, g = get_generator(bits)
     a = random.randint(2, p - 2)
