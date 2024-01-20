@@ -55,7 +55,7 @@ for x in x_values:
     print("---------------------")
     p1, p2, p3 = get_prob_correct(repetitions, x)
     y_both.append(p1)
-    y_both.append(p3)
+    y_least_one.append(p3)
 
 print(y_both)
 print(y_least_one)

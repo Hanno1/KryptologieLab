@@ -79,7 +79,7 @@ def generate_key(bits):
     # get phi_n
     phi_n = (p - 1) * (q - 1)
     k = 16
-    # get public key e as in the slides -> starting with 2^16 + 1 and incrementing k until ggt(e, phi_n) = 1
+    # get public key e as in the slides -> starting with 2^16(=k) + 1 and incrementing k until ggt(e, phi_n) = 1
     while True:
         e = 2**k + 1
         k += 1
