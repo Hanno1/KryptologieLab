@@ -51,10 +51,10 @@ class ECB:
         # decrypt every block
         decryption = ""
         for block in bit_blocks:
-            decryption += self.decode_bit_block(block)
+            decryption += self.decrypt_bit_block(block)
         return hc.bit_string_to_text(decryption)
 
-    def decode_bit_block(self, bit_string):
+    def decrypt_bit_block(self, bit_string):
         # just apply the aes algorithm decryption function
         return self.aes.decrypt(bit_string, self.key)
 

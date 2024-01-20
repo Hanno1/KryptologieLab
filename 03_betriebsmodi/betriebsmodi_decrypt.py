@@ -26,6 +26,7 @@ def compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file, iv="0
     if iv != "0"*128:
         iv = hc.hex_string_to_bit_string(hc.read_file(iv).replace("\n", "").replace(" ", ""))
 
+    # get the betriebsmodi
     if betriebsmodus.upper() == "ECB":
         betriebsmodi = ecb.ECB(key=keys)
     elif betriebsmodus.upper() == "CBC":
@@ -47,6 +48,7 @@ def compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file, iv="0
 
     hc.write_file(act_hex_result, output_file)
 
+# input functionallity -> there can be an Inititalization file or not
 if len(sys.argv) == 5:
     betriebsmodus = sys.argv[1]
     input_file = sys.argv[2]

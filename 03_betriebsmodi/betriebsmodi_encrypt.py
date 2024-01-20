@@ -47,6 +47,7 @@ def compute_betriebsmodi(betriebsmodus, input_file, key_file, output_file, iv="0
 
     hc.write_file(act_hex_result, output_file)
 
+# input functionallity -> there can be an Inititalization file or not
 if len(sys.argv) == 5:
     betriebsmodus = sys.argv[1]
     input_file = sys.argv[2]

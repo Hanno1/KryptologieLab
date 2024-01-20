@@ -5,7 +5,7 @@ class CBC:
     """
     implements the cbc blockchiffre using the aes algorithm for encrypting / decrypting blocks
     """
-    def __init__(self, initialisation, key, block_length=128):
+    def __init__(self, initialisation: str, key, block_length=128):
         self.key = key
         self.block_length = block_length
         # validate keys

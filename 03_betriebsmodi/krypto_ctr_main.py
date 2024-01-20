@@ -38,14 +38,14 @@ class CTR:
 
     def encrypt_block(self, bit_string, counter):
         """
-        encrypt single block just by using the aes and Xor adding the counter
+        encrypt single block just by using the aes and Xor adding the counter as in slides
         """
         counter_bit_string = bin(counter)[2:].zfill(self.block_length)
         return hc.xor_add(self.aes.encrypt(counter_bit_string, self.key), bit_string)
 
     def decrypt_text(self, cipher_text):
         """
-        decryption is basically just encryption in the ctr algorithm
+        decryption is just encryption in the ctr algorithm
         """
         return self.encrypt_text(cipher_text)
 

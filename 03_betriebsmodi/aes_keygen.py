@@ -8,6 +8,7 @@ def aes_keygen(key_hex_string):
     the returned keys are in bit format
     """
     # translate the hex key to a bit format -> a key with 32 hexchars has 128 bits
+    # -> basically algorithm from the slides
     key_bit_string = hc.hex_string_to_bit_string(key_hex_string)
     ws = []
     for i in range(44):
@@ -32,7 +33,7 @@ def aes_keygen(key_hex_string):
 
 def add_rcon(bit_string, index):
     """
-    rcon for a specific index. lookup in the RCON table
+    rcon for a specific index. lookup in the RCON table as in the slides
     """
     rcon = hc.RCON[(index // 4) - 1]
     rcon_value = bin(rcon)[2:].zfill(8) + "0" * 24

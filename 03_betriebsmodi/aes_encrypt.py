@@ -3,7 +3,7 @@ import aes as aes
 import helperclass as hc
 
 """
-main function to encrypt block with aes
+main function to encrypt blocks with aes
 """
 
 if len(sys.argv) == 4:

@@ -55,7 +55,7 @@ class AES:
         """
         text = hc.bit_string_to_text(bit_string)
         new_text = ""
-        # take each character and apply the sbox -> 8 bytes to 8 bytes
+        # take each character and apply the sbox -> 1 byte to 1 byte
         for char in text:
             new_text += chr(sbox[ord(char)])
         # convert back to bitstring
@@ -64,7 +64,7 @@ class AES:
     
     def shift_left(self, bit_list):
         """
-        shifts a list of bits one step to the left
+        shifts (rotate) a list of bytes one step to the left
         """
         new_list = copy.deepcopy(bit_list)
         tmp = new_list.pop(0)
@@ -73,7 +73,7 @@ class AES:
     
     def shift_right(self, bit_list):
         """
-        shifts a list of bits one step to the right
+        shifts (rotate) a list of bytes one step to the right
         """
         new_list = copy.deepcopy(bit_list)
         tmp = new_list.pop(-1)
@@ -115,11 +115,11 @@ class AES:
             current_bit_string = bit_string[col * 32: col * 32 + 32]
             new_bits = ["0"*8 for _ in range(4)]
             for entry in range(4):
-                # take byte part of entry, multiply it and then add it to new bits
+                # get the relevant entry from the current_bit_string
                 relevant_entry = current_bit_string[entry * 8: entry * 8 + 8]
                 for i in range(4):
                     # actual computation:
-                    # gets the multiplier from the current byte
+                    # gets the multiplier from the current byte -> reversed because the order is from 1 to 8
                     multiplier = hc.int_to_byte(mat[i][entry])[::-1]
                     # computes the result of the multiplication modulo the polynom x^8 + x^4 + x^3 + x + 1	
                     result = self.mix_columns_compute(relevant_entry, multiplier)
@@ -135,6 +135,7 @@ class AES:
         """
         result_bit_string = "0"*8
         for b in range(4):
+            # if multiplier == 1 -> double the string b times
             if multiplier[b] == "1":
                 new_bit_string = copy.deepcopy(byte_string)
                 for _ in range(b):
