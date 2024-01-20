@@ -75,6 +75,9 @@ def get_linear_approx(linear_approx_file):
                     tmp.append(int(entry, 16))
                 new_line.append(tmp)
             data.append(new_line)
+    # data is in form [[[0, 0], [1, 2], [0, 0], [3, 14]], ...] -> first s-box in first line input is in the first first element on the left
+    # first s-box in first line output is in the first first element on the right
+    # and so one for all s-box activity in the linear approximation
     return data
 
 def get_s_box(s_box_file):
@@ -94,11 +97,13 @@ def get_s_box(s_box_file):
 def count_zeros(approx, s_box):
     """
     gets the approximation of a s box -> input , output in a list like [11, 4]
-    goes through every combination of possible inputs and computes how often the output has a even number of zeros
-    this approach to the algorithm is directly taken from the main lecture slides
+    goes through every combination of possible inputs and computes how often U_a id equal to U_b
+    this approach to the algorithm is directly taken from the main lecture slides -> page 139 / 140 -> computation of l(a,b)
     """
     # approx has form [11, 4] with 11 being the input bits and 4 the output bits
+    # a
     active_input_bits = hc.int_to_bit_4(approx[0])
+    # b
     active_output_bits = hc.int_to_bit_4(approx[1])
 
     zeros_counter = 0
@@ -106,20 +111,20 @@ def count_zeros(approx, s_box):
     for i in range(16):
         # convert i to bit representation (4 bits)
         bit_repr = hc.int_to_bit_4(i)
-        # apply x_box
+        # apply s_box
         after_s_box = s_box[i]
         bit_repr_after = hc.int_to_bit_4(after_s_box)
 
-        # for every active bit in the input, calculate the activity output
+        # for every active bit in the input, calculate the activity output -> U_a
         bit_list = []
         for b in range(len(active_input_bits)):
             if active_input_bits[b] == '1':
                 bit_list.append(bit_repr[b])
-        # for every active bit in the output, calculate the activity output
+        # active bits in the output -> U_b
         for b in range(len(active_output_bits)):
             if active_output_bits[b] == '1':
                 bit_list.append(bit_repr_after[b])
-        # count zeros -> even? -> add to counter
+        # count ones -> since we want to know if U_a xor U_b is zero -> if ones are even -> we have U_a xor U_b = zero
         if bit_list.count('1') % 2 == 0:
             zeros_counter += 1
     return zeros_counter
@@ -136,6 +141,7 @@ def get_bias(linear_approx_file, s_box_file):
     if check == -1:
         print("Approximation is not right!")
         exit(-1)
+
     # get the s box
     s_box = get_s_box(s_box_file)
     different_s_boxes = {}
@@ -151,7 +157,7 @@ def get_bias(linear_approx_file, s_box_file):
             else:
                 different_s_boxes[(start, end)] = 1
 
-    # calculate the bias as given in the main lecture slides
+    # calculate the bias as given in the main lecture slides page 148-150
     bias = 2**(length - 1)
     for key in different_s_boxes:
         zeros = (count_zeros(key, s_box) - 8) / 16
