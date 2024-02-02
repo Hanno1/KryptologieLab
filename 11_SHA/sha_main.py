@@ -1,185 +1,145 @@
 import helperclass as hc
-import copy
 
-ROTATIONS = [
-    [0, 1, 62, 28, 27],
-    [36, 44, 6, 55, 20],
-    [3, 10, 43, 25, 39],
-    [41, 45, 15, 21, 8],
-    [18, 2, 61, 56, 14],
-]
+d = 224
+r = 1152
+c = 448
+b = c + r
 
-ROUND_CONSTANTS = [
+rotation = [[0, 1, 62, 28, 27],
+            [36, 44, 6, 55, 20],
+            [3, 10, 43, 25, 39],
+            [41, 45, 15, 21, 8],
+            [18, 2, 61, 56, 14]]
+
+# round constants as hex strings
+roundConstantsHex = [
     "0000000000000001",
     "0000000000008082",
-    "800000000000808a",
+    "800000000000808A",
     "8000000080008000",
-    "000000000000808b",
+    "000000000000808B",
     "0000000080000001",
     "8000000080008081",
     "8000000000008009",
-    "000000000000008a",
+    "000000000000008A",
     "0000000000000088",
     "0000000080008009",
-    "000000008000000a",
-    "000000008000808b",
-    "800000000000008b",
+    "000000008000000A",
+    "000000008000808B",
+    "800000000000008B",
     "8000000000008089",
     "8000000000008003",
     "8000000000008002",
     "8000000000000080",
-    "000000000000800a",
-    "800000008000000a",
+    "000000000000800A",
+    "800000008000000A",
     "8000000080008081",
     "8000000000008080",
     "0000000080000001",
-    "8000000080008008"
-]
+    "8000000080008008"]
 
-r = 1152
-c = 448
-b = r + c
-d = 224
+# change order of bytes -> since in the table its 64-k and not k
+roundConstantsHex = ["".join((hex[14:16],hex[12:14],hex[10:12],hex[8:10],hex[6:8],hex[4:6],hex[2:4],hex[0:2])) for hex in roundConstantsHex]
+# convert to binary -> little endian
+roundConstants = [hc.hex_string_to_binary(hex) for hex in roundConstantsHex]
 
-def get_coord(i, j, k):
-    return i * 320 + j * 64 + k
+def getCoord(i,j,k):
+    """
+    calculate coordinate for string slicing -> modulo to wrap around
+    """
+    return (i % 5) * 320 + (j % 5) * 64 + (k % 64)
 
-def main_hashing(message):
-    message = padding(message)
-    s = "0" * b
-    for block in message:
-        added = hc.xor_add(s, block + "0" * c)
-        s = hash(added)
-    s = hc.bit_string_to_hex_string(s)
-    return s[:224//4]
+def getBlock(block,i,j):
+    """
+    returns array of 64 bits from string block and coordinates i,j
+    """
+    return block[getCoord(i,j,0):getCoord(i,j,0)+64]
 
-def changeOrder(block):
-    newBlock = ""
-    for i in range(0, len(block), 8):
-        newBlock += block[i:i+8][::-1]
-    return newBlock
+def get_parity(block,j,k):
+    """
+    returns the parity of the column j at position k
+    """
+    bs = [block[getCoord(i,j,k)] for i in range(5)]
+    return hc.xor(bs[0],bs[1],bs[2],bs[3],bs[4])
 
-def padding(message):
-    message += "011"
-    while (len(message) + 1) % r != 0:
-        message += "0"
-    message += "1"
-    # return k blocks of r bits
-    return [changeOrder(message[i:i+r]) for i in range(0, len(message), r)]
-
-def hash(value):
-    # turn value into blocks of 64 bits
-    value = [[value[i*320 + j*64:i*320 + j *64 + 64] for j in range(5)] for i in range(5)]
+def hash(block):
+    """
+    hash function -> 24 rounds of functions theta, rho, pi, chi, iota
+    """
     for i in range(24):
-        value = theta(value)
-        value = rho(value)
-        value = pi(value)
-        value = chi(value)
-        value = iota(value, i)
-    # convert it back
-    v = ""
+        block = theta(block)
+        block = rho(block)
+        block = pi(block)
+        block = chi(block)
+        block = iota(block,i)
+    return block
+
+def theta(block):
+    """
+    implemented theta as in slides using string slicing
+    """
+    out = ""
     for i in range(5):
         for j in range(5):
-            v += value[i][j]
-    return v
-
-def theta(value):
-    current_value = []
-    for i in range(0, 5):
-        current_line = []
-        for j in range(0, 5):
-            v = ""
             for k in range(64):
-                tmp = value[i][j][k]
-                a1 = parity(value, (j - 1) % 5, k)
-                a2 = parity(value, (j + 1) % 5, (k - 1) % 64)
-                new_value = hc.xor_add(a1, hc.xor_add(a2, tmp))
-                v += new_value
-            current_line.append(v)
-        current_value.append(current_line)
-    return current_value
+                out += hc.xor(block[getCoord(i,j,k)], get_parity(block,j-1,k), get_parity(block,j+1,k-1))
+    return out
 
-def parity(value, j, k):
-    v = 0
-    for i in range(0, 4):
-        v += int(value[i][j][k], 2)
-    return str(v % 2)
-
-def rho(value):
-    new_value = []
-    for i in range(0, 5):
-        new_line = []
-        for j in range(0, 5):
-            line = value[i][j]
-            current_rotation_value = ROTATIONS[i][j]
-            new_line.append(rotateBitString(line, current_rotation_value))
-        new_value.append(new_line)
-    return new_value
-
-def rotateBitString(value, n):
-    return value[n:] + value[:n]
-
-def pi(value):
-    current_value = []
+def rho(block):
+    """
+    implemented rho rotation as in slides
+    """
+    out = ""
     for i in range(5):
-        current_line = []
         for j in range(5):
-            current_line.append(value[j][(3 * i + j) % 5])
-        current_value.append(current_line)        
-    return current_value
+            sub_block = getBlock(block,i,j)
+            # the current end of the block is the beginning of the new block
+            out += sub_block[64-rotation[i][j]:] + sub_block[:64-rotation[i][j]]
+    return out
 
-def chi(value):
-    current_value = []
+def pi(block):
+    """
+    rotation as in slides
+    """
+    out = ""
     for i in range(5):
-        current_line = []
         for j in range(5):
-            result = hc.xor_add(value[i][j], hc.and_bits(value[i][(j+1)%5], hc.negate(value[i][(j+2) % 5])))
-            current_line.append(result)
-        current_value.append(current_line)
-    return value
+            out += getBlock(block,j,3*i+j)
+    return out
 
-def iota(value, c):
-    value[0][0] = hc.xor_add(value[0][0], hc.hex_string_to_bit_string(ROUND_CONSTANTS[c]))
-    return value
+def chi(block):
+    """
+    non linear function chi as in slides
+    """
+    out = ""
+    for i in range(5):
+        for j in range(5):
+            out += hc.xor(getBlock(block,i,j), hc.and_(hc.not_(getBlock(block,i,j+1)), getBlock(block,i,j+2)))
+    return out
 
+def iota(block,r):
+    """
+    add roundconstant to the first 64 bits of the block
+    """
+    return hc.xor(block[:64], roundConstants[r]) + block[64:]
 
+def padding(msg):
+    """
+    add padding to the message as per sha3 224
+    """
+    msg = msg + "011"
+    while (len(msg) + 1) % r != 0:
+        msg = msg + "0"
+    msg += "1"
+    blocks = [msg[i:i+r] for i in range(0, len(msg), r)]
+    return blocks
 
-
-
-# def convert_to_blocks(block):
-#     lines = [block[i*320:i*320 + 320] for i in range(5)]
-#     new_lines = []
-#     for line in lines:
-#         # new_lines.append([line[i*64:i*64 + 64] for i in range(5)])
-#         new_lines.append([[line[i*64:i*64 + 64][j] for j in range(64)] for i in range(5)])
-#     return new_lines
-
-# def hash_mat(mat):
-#     for _ in range(24):
-#         current_mat = copy.deepcopy(mat)
-#         for row in range(0, 5):
-#             for col in range(0, 5):
-#                 for k in range(64):
-#                     tmp = mat[row][col][63 - k]
-#                     a1 = parity_mat(mat, (col - 1) % 5, (63 - k))
-#                     a2 = parity_mat(mat, (col + 1) % 5, (63 - ((k - 1) % 64)))
-#                     new_value = hc.xor_add(a1, hc.xor_add(a2, tmp))
-#                     current_mat[row][col][k] = new_value
-#         mat = current_mat
-#     return mat
-
-# def parity_mat(mat, col, k):
-#     v = 0
-#     for row in range(0, 5):
-#         v += int(mat[row][col][k], 2)
-#     return str(1 - v % 2)
-
-if __name__ == "__main__":
-    # https://en.wikipedia.org/wiki/SHA-3
-    # message = "Hallo Welt das ist ein lange Nachricht die gehasht werden soll. Ich hoffe das funktioniert. Ich bin mir aber nicht sicher. Der text ist aber noch nicht lange genug!"
-    # message = hc.text_to_bit_string(message)
-
-    message = open("test.txt").readlines()[0].replace(" ", "")
-    print(message)
-    message = hc.hex_string_to_bit_string(message)
-    print(main_hashing(message))
+def main_alg(msg):
+    """
+    main algorithm of sha 3 224
+    """
+    blocks = padding(msg)
+    s = "0" * b
+    for block in blocks:
+        s = hash(hc.xor(s, block+("0"*c)))
+    return s[:d]

@@ -1,85 +1,51 @@
-def char_to_bit(char):
-    # character to byte
-    return bin(ord(char))[2:].zfill(8)
+def cleanHex(hex):
+    """
+    remove all non-hex characters from a hex string
+    """
+    return hex.replace(" ", "")
 
-def byte_to_char(bit):
-    # byte to character
-    return chr(int(bit, 2))
+def hex_to_byte(hex):
+    """
+    converts 2 hex to 8 bit binary -> little endian
+    """
+    return bin(int(hex, 16))[2:].zfill(8)[::-1]
 
-def int_to_byte(integer):
-    # integer to byte
-    return bin(integer)[2:].zfill(8)
+def hex_string_to_binary(hex):
+    """
+    convert an entire hex string into a binary string -> little endian
+    """
+    hex = cleanHex(hex)
+    return "".join([hex_to_byte(hex[i:i+2]) for i in range(0, len(hex), 2)])
 
-def text_to_bit_string(text):
+def byte_to_hex(binary):
     """
-    converts a text into a bit string -> encodes every char as byte
+    converts a byte to 2 hex chars -> byte is in little endian
     """
-    bit_string = ""
-    for char in text:
-        bit_string += str(char_to_bit(char))
-    return bit_string
+    return hex(int(binary[::-1], 2))[2:].zfill(2)
 
-def bit_string_to_text(bit_string):
-    """
-    converts a bit string back into normal text
-    """
-    text = ""
-    for i in range(0, len(bit_string), 8):
-        text += byte_to_char(bit_string[i:i+8])
-    return text
+def binary_string_to_hex(binary):
+    return "".join([byte_to_hex(binary[i:i+8]) for i in range(0, len(binary), 8)])
 
-def xor_add(bit_string1, bit_string2):
+def xor(*args):
     """
-    takes 2 bitstrings and applies the XOR function to them. 
-    It is implemented using strings because it is easier to understand.
+    bitwise xor on binary strings
     """
-    bit_string = ""
-    for i in range(len(bit_string1)):
-        bit_string += str(int(bit_string1[i]) ^ int(bit_string2[i]))
-    return bit_string
+    return ''.join(str(sum(int(i) for i in x) % 2) for x in zip(*args))
 
-def negate(bit_string):
+def and_(*args):
     """
-    negates a bit string
+    bitwise and on binary strings
     """
-    new_bit_string = ""
-    for char in bit_string:
+    return ''.join(str(min(int(i) for i in x)) for x in zip(*args))
+
+def not_(a):
+    """
+    bitwise not on binary string
+    """
+    new = ""
+    for char in a:
         if char == "0":
-            new_bit_string += "1"
+            new += "1"
         else:
-            new_bit_string += "0"
-    return bit_string
-
-def and_bits(bit_string1, bit_string2):
-    """
-    takes 2 bitstrings and applies the AND function to them. 
-    It is implemented using strings because it is easier to understand.
-    """
-    bit_string = ""
-    for i in range(len(bit_string1)):
-        c1 = bit_string1[i]
-        c2 = bit_string2[i]
-        if c1 == "1" and c2 == "1" or c1 == "0" and c2 == "0":
-            bit_string += "0"
-        else:
-            bit_string += "1"
-        bit_string += str(int(bit_string1[i]) & int(bit_string2[i]))
-    return bit_string
-
-def bit_string_to_hex_string(bit_string):
-    """
-    converts a bit string into a hex string -> take every 4 bits and convert them to one hex char
-    """
-    hex_string = ""
-    for i in range(0, len(bit_string), 4):
-        hex_string += hex(int(bit_string[i:i+4], 2))[2:]
-    return hex_string
-
-def hex_string_to_bit_string(hex_string):
-    """
-    converts a hex string into a bitstring
-    """
-    bit_string = ""
-    for el in hex_string:
-        bit_string += int_to_byte(int(el, 16))[4:]
-    return bit_string
+            new += "0"
+    return new
