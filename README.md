@@ -43,3 +43,6 @@ Die Repetitions scheinen zu niedrig, aber es ist doch zu sehen, dass die Wahrsch
 
 10. Aufgabe - Diffie Hellmann Schlüsselaustausch
 - Die 10.te Aufgabe befindet sich im Ordner 10_diffie_helmann. Zum Ausführen muss `py diffie_hellman.py <bitlength>` in die Konsole eingegeben werden. Die Variable <bitlength> beschreibt die Länge der verwendeten Primzahlen (circa). Diese Zahl sollte nicht zu groß werden. Eine Größe von etwa 100 sollte ausreichen. Die Ausgabe ist in der Konsole und beinhaltet die Primzahl p, den Generator g, Alices Berechnung A, Bobs Berechnung B und das gemeinsame Geheimnis S.
+
+11. Aufgabe - Sha3 224
+- Die 11.te Aufgabe ist im Ordner 11:SHA gespeichert. Zum Ausführen muss `py sha3.py <input_file> <output_file>` in die Konsole eingegeben werden. <input_file> ist die Datei, in der der zu hashende Text steht. Der Text ist im hexadezimal Format gespeichert. Das Resultat des Hashing wir in das file <output_file> geschrieben. Das Format ist ebenfalls hexadezimal. Es wurde mit dem Text "Hello World" getestet und das Ergebnis stimmt nach dem online Hashalgorithmus [hier](https://emn178.github.io/online-tools/sha3_224.html).

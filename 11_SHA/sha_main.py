@@ -38,28 +38,28 @@ roundConstantsHex = [
     "0000000080000001",
     "8000000080008008"]
 
-# change order of bytes -> since in the table its 64-k and not k
-roundConstantsHex = ["".join((hex[14:16],hex[12:14],hex[10:12],hex[8:10],hex[6:8],hex[4:6],hex[2:4],hex[0:2])) for hex in roundConstantsHex]
-# convert to binary -> little endian
-roundConstants = [hc.hex_string_to_binary(hex) for hex in roundConstantsHex]
+# convert to little endian
+roundConstantsHex = [hc.hex_to_little_endian(hc.clean_hex(hex)) for hex in roundConstantsHex]
+# convert to binary
+roundConstantsBinary = [hc.hex_string_to_binary(hex) for hex in roundConstantsHex]
 
-def getCoord(i,j,k):
+def get_coord(i,j,k):
     """
     calculate coordinate for string slicing -> modulo to wrap around
     """
     return (i % 5) * 320 + (j % 5) * 64 + (k % 64)
 
-def getBlock(block,i,j):
+def get_block(block,i,j):
     """
     returns array of 64 bits from string block and coordinates i,j
     """
-    return block[getCoord(i,j,0):getCoord(i,j,0)+64]
+    return block[get_coord(i,j,0):get_coord(i,j,0)+64]
 
 def get_parity(block,j,k):
     """
     returns the parity of the column j at position k
     """
-    bs = [block[getCoord(i,j,k)] for i in range(5)]
+    bs = [block[get_coord(i,j,k)] for i in range(5)]
     return hc.xor(bs[0],bs[1],bs[2],bs[3],bs[4])
 
 def hash(block):
@@ -82,7 +82,7 @@ def theta(block):
     for i in range(5):
         for j in range(5):
             for k in range(64):
-                out += hc.xor(block[getCoord(i,j,k)], get_parity(block,j-1,k), get_parity(block,j+1,k-1))
+                out += hc.xor(block[get_coord(i,j,k)], get_parity(block,j-1,k), get_parity(block,j+1,k-1))
     return out
 
 def rho(block):
@@ -92,7 +92,7 @@ def rho(block):
     out = ""
     for i in range(5):
         for j in range(5):
-            sub_block = getBlock(block,i,j)
+            sub_block = get_block(block,i,j)
             # the current end of the block is the beginning of the new block
             out += sub_block[64-rotation[i][j]:] + sub_block[:64-rotation[i][j]]
     return out
@@ -104,7 +104,7 @@ def pi(block):
     out = ""
     for i in range(5):
         for j in range(5):
-            out += getBlock(block,j,3*i+j)
+            out += get_block(block,j,3*i+j)
     return out
 
 def chi(block):
@@ -114,14 +114,14 @@ def chi(block):
     out = ""
     for i in range(5):
         for j in range(5):
-            out += hc.xor(getBlock(block,i,j), hc.and_(hc.not_(getBlock(block,i,j+1)), getBlock(block,i,j+2)))
+            out += hc.xor(get_block(block,i,j), hc.and_(hc.not_(get_block(block,i,j+1)), get_block(block,i,j+2)))
     return out
 
 def iota(block,r):
     """
     add roundconstant to the first 64 bits of the block
     """
-    return hc.xor(block[:64], roundConstants[r]) + block[64:]
+    return hc.xor(block[:64], roundConstantsBinary[r]) + block[64:]
 
 def padding(msg):
     """
@@ -137,6 +137,7 @@ def padding(msg):
 def main_alg(msg):
     """
     main algorithm of sha 3 224
+    used to start the hash function
     """
     blocks = padding(msg)
     s = "0" * b

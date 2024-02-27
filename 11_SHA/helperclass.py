@@ -1,8 +1,17 @@
-def cleanHex(hex):
+def clean_hex(hex):
     """
     remove all non-hex characters from a hex string
     """
     return hex.replace(" ", "")
+
+def hex_to_little_endian(hex):
+    """
+    converts a hex string into little endian format
+    """
+    new_hex_string = ""
+    for i in range(0, len(hex), 2):
+        new_hex_string = hex[i:i+2] + new_hex_string
+    return new_hex_string
 
 def hex_to_byte(hex):
     """
@@ -14,7 +23,7 @@ def hex_string_to_binary(hex):
     """
     convert an entire hex string into a binary string -> little endian
     """
-    hex = cleanHex(hex)
+    hex = clean_hex(hex)
     return "".join([hex_to_byte(hex[i:i+2]) for i in range(0, len(hex), 2)])
 
 def byte_to_hex(binary):
